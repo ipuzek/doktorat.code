@@ -158,8 +158,7 @@ ggplot(sveST, aes(x = dmg2, y = prihod.PC, colour = to_factor(dmg1))) +
   ylim(c(0,10000)) + xlim(c(16,70)) +
   geom_smooth(method = "lm")
 
-
-
+# imovina vs prihod vs dob!
 
   
   

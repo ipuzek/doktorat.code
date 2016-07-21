@@ -19,3 +19,4 @@ lm(prihod.PC ~ spol + dmg2, data = sveST) %>% display()
 lm(prihod.PC ~ dmg1 + dmg2, data = sveST, weights = rim_w_1) %>% display()
 lm(prihod.PC ~ spol + dmg2, data = sveST, weights = rim_w_1) %>% display()
 
+# imovina vs prihod vs dob! TODO
