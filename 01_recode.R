@@ -4,7 +4,7 @@ library(purrr); library(dplyr); library(tidyr); library(labelled)
 library(ggplot2)
 
 library(broom); library(intubate)
-source("/IvanP/R/pocetni.R")
+source("IvanP/R/pocetni.R")
 
 transf_cont <- function(x, no_valid_labs, min = "auto", max = "auto", digits = 0) {
   
@@ -36,7 +36,7 @@ transf_cont <- function(x, no_valid_labs, min = "auto", max = "auto", digits = 0
 ntbt_ltabs <- ntbt_function_formula_data
 
 haven::read_spss(
-  "/IvanP/!Istrazivanja/Split - kulturne potrebe/Podaci/web0903_13_lab_v1_encoding.sav"
+  "IvanP/!Istrazivanja/Split - kulturne potrebe/Podaci/web0903_13_lab_v1_encoding.sav"
   ) -> sveST
 
 # recodes #
@@ -153,7 +153,7 @@ sveST$prih.tmp <- NULL
 ## u ovom slučaju, vrijednost indeksa je broj validnih odgovora ##
 
 sveST <- sveST %>%
-  mutate_at(vars(starts_with("dmg14_"), -dmg14_6), funs(v = is.not.na)) %>%
+  mutate_at(vars(starts_with("dmg14_"), -dmg14_6), funs(v = isnt_na)) %>%
   mutate(imovina.kucanstva = dmg14_1_v + dmg14_2_v + dmg14_3_v + dmg14_4_v + dmg14_5_v) %>% 
   select(-dmg14_1_v, -dmg14_2_v, -dmg14_3_v, -dmg14_4_v, -dmg14_5_v)
 

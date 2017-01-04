@@ -1,3 +1,4 @@
+# GELMAN - 12. poglavlje --------------------------------------------------
 library(lme4)
 library(arm)
 
@@ -25,7 +26,6 @@ to.filter <- c("LAC QUI PARLE",
                "STEARNS",
                "RAMSEY",
                "ST LOUIS")
-
 
 
 srrs2.radon.filtered.county <- srrs2.radon.filtered %>% 
@@ -82,17 +82,15 @@ coef(M1)$county.fct %>%
 library(broom); library(ggplot2)
 library(stringr)
 
-# for geom_abline(slope = , intercept = )
+# for geom_abline(slope = , intercept = ) (complete pooling)
 M.complete <- lm(log.radon ~ floor, data = srrs2.radon.filtered) %>% 
   tidy()
 
-# for no pooling
+# for no pooling (but fixed slopes)
 M.no <- lm(log.radon ~ floor + county.fct - 1, data = srrs2.radon.filtered) %>% 
   tidy %>% 
-  mutate(term = str_replace_all(term, "county.fct", ""))
-
-M.no.done <- mutate(M.no,
-               est.floor = M.no$estimate[M.no$term == "floor"]) %>%
+  mutate(term = str_replace_all(term, "county.fct", ""),
+         est.floor = estimate[term == "floor"]) %>%
   filter(term != "(Intercept)" & term != "floor") %>% 
   rename(county.fct = term) %>% 
   filter(county.fct %in% to.filter) %>% 
@@ -110,7 +108,7 @@ ggplot(data = srrs2.radon.filtered.county) +
               width = .1, height = .1, size = .5) +
   geom_abline(slope = M.complete$estimate[2], intercept = M.complete$estimate[1],
               linetype = 3) +
-  geom_abline(data = M.no.done, aes(slope = est.floor, intercept = estimate),
+  geom_abline(data = M.no, aes(slope = est.floor, intercept = estimate),
               size = 2) +
   geom_abline(data = M.gg.multi, aes(slope = floor, intercept = `(Intercept)`)) +
   facet_wrap(~ county.fct, nrow = 2) +
@@ -132,9 +130,34 @@ ggplot(data = srrs2.radon.filtered.county) +
 # get the county-level predictor
 
 srrs2.fips <- srrs2$stfips*1000 + srrs2$cntyfips
-cty <- read.table ("cty.dat", header=T, sep=",")
+
+# cty <- read.table ("cty.dat", header=T, sep=",")
+cty <- read_csv("IvanP/!!!Doktorat/Gelman/ARM_Data/radon/cty.dat",
+                na = ".",
+                col_types = cols(
+                  stfips = col_double(),
+                  ctfips = col_double(),
+                  st = col_character(),
+                  cty = col_character(),
+                  lon = col_double(),
+                  lat = col_double(),
+                  Uppm = col_double()
+                ))
+
+
 usa.fips <- 1000*cty[,"stfips"] + cty[,"ctfips"]
-usa.rows <- match (unique(srrs2.fips[mn]), usa.fips)
+
+cty$Uppm %>% summary
+
+mn <- srrs2$state=="MN"
+usa.rows <- match (unique(srrs2.fips[mn]), usa.fips$stfips)
+
 uranium <- cty[usa.rows,"Uppm"]
+
 u <- log (uranium)
+
+
+u[county]
+# DODAJ GRUPNI prediktor --------------------------------------------------
+
 
