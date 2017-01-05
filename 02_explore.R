@@ -1,7 +1,5 @@
 ### SVEsplit doktorat ### EDA ###
 
-
-
 # EXPLORE
 ggplot(sveST, aes(x = to_factor(imovina.kucanstva), y = prihod.PC)) +
   geom_boxplot() + 
