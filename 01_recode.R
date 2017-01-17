@@ -169,3 +169,5 @@ sveST <- sveST %>%
   select(-dmg14_1_v, -dmg14_2_v, -dmg14_3_v, -dmg14_4_v, -dmg14_5_v)
 
 var_label(sveST$imovina.kucanstva) <- "Imovina - indeks"
+
+# haven::write_sav(sveST, "IvanP/!Istrazivanja/Split - kulturne potrebe/mirko/Mirko_ST/sveST.sav")
