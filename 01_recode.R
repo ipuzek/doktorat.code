@@ -4,6 +4,7 @@ library(purrr); library(dplyr); library(tidyr); library(labelled)
 library(ggplot2)
 
 library(broom); library(intubate)
+
 source("IvanP/R/pocetni.R")
 
 transf_cont <- function(x, no_valid_labs, min = "auto", max = "auto", digits = 0) {
@@ -66,8 +67,10 @@ sveST %>%
                 ordered_result = FALSE)
   ) -> sveST   # %>% ntbt_ltabs(~dmg2 + dob.10)
 
+
 var_label(sveST$dob.10) <- "10-godišnje dobne skupine"
 var_label(sveST$dob.5) <- "5-godišnje dobne skupine"
+
 
 # OBRAZOVANJE -------------------------------------------------------------
 
@@ -75,6 +78,7 @@ sveST$obraz <- cut(sveST$dmg3, include.lowest=TRUE,  right=TRUE,
     breaks=c(1,3,4,6,7,8,9),
     labels = c("OŠ", "SŠ_3god", "SŠ_4god", "Viša", "Fakultet", "Mag+"),
     ordered_result = FALSE)
+
 
 var_label(sveST$obraz) <- "Stupanj obrazovanja"
 
@@ -102,7 +106,9 @@ recode_factor(
 ) -> sveST$zanimanje
 sveST$zanimanje <- na_if(sveST$zanimanje, "NZBO")
 
+
 var_label(sveST$zanimanje) <- "Zanimanje"
+
 
 # PRIHODI KUĆANSTVA -------------------------------------------------------
 
@@ -126,6 +132,7 @@ recode_factor(
 ) -> sveST$prihod
 
 sveST$prihod <- na_if(sveST$prihod, "NZBO")
+
 
 var_label(sveST$prihod) <- "Prihod kućanstva"
 
@@ -157,17 +164,18 @@ sveST %>%
 
 sveST$prih.tmp <- NULL
 
+
 var_label(sveST$prihod.cont) <- "Prihod - kontinuirani"
 var_label(sveST$prihod.PC) <- "Prihod - po članu kućanstva"
+
 
 # IMOVINA KUĆANSTVA -------------------------------------------------------
 ## u ovom slučaju, vrijednost indeksa je broj validnih odgovora ##
 
 sveST <- sveST %>%
+
   mutate_at(vars(starts_with("dmg14_"), -dmg14_6), funs(v = isnt_na)) %>%
   mutate(imovina.kucanstva = dmg14_1_v + dmg14_2_v + dmg14_3_v + dmg14_4_v + dmg14_5_v) %>% 
   select(-dmg14_1_v, -dmg14_2_v, -dmg14_3_v, -dmg14_4_v, -dmg14_5_v)
 
 var_label(sveST$imovina.kucanstva) <- "Imovina - indeks"
-
-# haven::write_sav(sveST, "IvanP/!Istrazivanja/Split - kulturne potrebe/mirko/Mirko_ST/sveST.sav")

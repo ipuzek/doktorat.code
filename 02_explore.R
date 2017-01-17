@@ -17,4 +17,3 @@ ggplot(sveST, aes(x = dmg2, y = prihod.PC, colour = to_factor(dmg1))) +
 
 # imovina vs prihod vs dob!
 
-
