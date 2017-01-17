@@ -1,8 +1,8 @@
 ### SVEsplit doktorat ###
-library(stringr); library(purrr)
-library(dplyr); library(tidyr); library(questionr); library(labelled)
-library(ggplot2); library(scales)
 library(stringr); library(magrittr)
+library(purrr); library(dplyr); library(tidyr); library(labelled)
+library(ggplot2)
+
 library(broom); library(intubate)
 source("/IvanP/R/pocetni.R")
 
@@ -51,7 +51,6 @@ sveST %>%
     spol = to_factor(spol.num)
   ) -> sveST # %>% ntbt_ltabs(~spol+spol.num)
 
-
 # DOB ---------------------------------------------------------------------
 
 sveST %>% 
@@ -59,13 +58,13 @@ sveST %>%
     dob.10 = cut(dmg2, include.lowest=TRUE,  right=TRUE,
                  breaks=c(16, 25, 35, 45, 55, 65, 86),
                  labels = c("16-25","26-35","36-45","46-55","56-65","66+"),
-                 ordered_result = TRUE),
+                 ordered_result = FALSE),
     dob.5 = cut(dmg2, include.lowest=TRUE,  right=TRUE,
                 breaks=c(16, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 86),
                 labels = c("16-20", "21-25", "26-30", "31-35", "36-40", "41-45", 
                            "46-50", "51-55", "56-60", "61-65", "66-70", "71-75", "76-86"),
-                ordered_result = TRUE)
-  ) -> sveST # %>% ntbt_xtabs(~dmg2 + dob.10)
+                ordered_result = FALSE)
+  ) -> sveST   # %>% ntbt_ltabs(~dmg2 + dob.10)
 
 
 # OBRAZOVANJE -------------------------------------------------------------
@@ -73,7 +72,7 @@ sveST %>%
 sveST$obraz <- cut(sveST$dmg3, include.lowest=TRUE,  right=TRUE,
     breaks=c(1,3,4,6,7,8,9),
     labels = c("OŠ", "SŠ_3god", "SŠ_4god", "Viša", "Fakultet", "Mag+"),
-    ordered_result = TRUE)
+    ordered_result = FALSE)
 
 # ZANIMANJE ---------------------------------------------------------------
 
@@ -98,8 +97,6 @@ recode_factor(
   `98` = "NZBO"
 ) -> sveST$zanimanje
 sveST$zanimanje <- na_if(sveST$zanimanje, "NZBO")
-#frre(sveST$zanimanje)
-
 
 # PRIHODI KUĆANSTVA -------------------------------------------------------
 
@@ -124,7 +121,7 @@ recode_factor(
 
 sveST$prihod <- na_if(sveST$prihod, "NZBO")
 
-
+#
 
 sveST$prih.tmp <- sveST$dmg11
 
