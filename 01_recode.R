@@ -6,34 +6,9 @@ library(ggplot2)
 library(broom); library(intubate)
 
 source("IvanP/R/pocetni.R")
+source("IvanP/!!!Doktorat/doktorat.code/FUNS/transf_cont.R")
 
-transf_cont <- function(x, no_valid_labs, min = "auto", max = "auto", digits = 0) {
-  
-  if (identical(min, "auto") && identical(max, "auto")) {
-    nejmz <- names(val_labels(x))[1:no_valid_labs]
-    nejmz.brojke <- str_extract_all(nejmz, "[0-9]+")
-    mini <- lapply(nejmz.brojke, function(x) x[1]) %>% unlist %>% as.numeric()
-    maxi <- lapply(nejmz.brojke, function(x) x[2]) %>% unlist %>% as.numeric()
-  } else {
-    if (length(min) == length(max)) {
-      mini <- min
-      maxi <- max
-      warning("auto not used - check min and max carefully", call. = FALSE)  
-    } else stop("min-max lengths unequal")
-  }
-  
-  set.seed(666)
-  x <- as.numeric(x)                         # 0. input
-  
-  for (i in seq_along(1:no_valid_labs)) {    # 2. sequence
-    
-    x[x == i] <- runif(length(x[x == i]), min = mini[i], max = maxi[i])
-    
-  }
-  
-  round(x, digits = digits)                  # 3. output
-  
-}
+
 ntbt_ltabs <- ntbt_function_formula_data
 
 haven::read_spss(
@@ -50,7 +25,7 @@ sveST %>%
     spol.num = dmg1 - 1,
     spol.num = labelled(spol.num, c(Muškarac = 0, Žena = 1)),
     spol = to_factor(spol.num)
-  ) -> sveST # %>% ntbt_ltabs(~spol+spol.num)
+  ) -> sveST  # %>% ntbt_ltabs(~spol+spol.num)
 
 # DOB ---------------------------------------------------------------------
 
