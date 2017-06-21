@@ -1,8 +1,9 @@
 
 # KOTAREVI ----------------------------------------------------------------
 
-sifrarnik <- readxl::read_xlsx("IvanP/!!!Doktorat/doktorat.code/data_pomocni/sifrarnik__kotarevi.xlsx") %>% 
-  select(ID, kotar.num)
+sifrarnik <- readxl::read_xlsx(
+  "IvanP/!!!Doktorat/doktorat.code/data_pomocni/sifrarnik__kotarevi.xlsx"
+  ) %>% select(ID, kotar.num)
 
 kotar.char <- c(
   "Bačvice-Trstenik",
@@ -36,12 +37,14 @@ for (i in 1:22) {
   sveST$kotar[sveST$id %in% sifrarnik$ID[sifrarnik$kotar.num == i]] <- kotar.char[i]
 }
 
-# count(sveST, kotar) # %>% View
+# count(sveST, kotar) %>% View
 
 
 sveST$klaster <- "aaa"
 
-sifrarnik.klaster <- readxl::read_xlsx("IvanP/!!!Doktorat/doktorat.code/data_pomocni/sifrarnik__kotarevi_klasteri.xlsx")
+sifrarnik.klaster <- readxl::read_xlsx(
+  "IvanP/!!!Doktorat/doktorat.code/data_pomocni/sifrarnik__kotarevi_klasteri.xlsx"
+  )
 
 for (i in 1:22) {
   sveST$klaster[sifrarnik.klaster$kotar[i] == sveST$kotar] <- sifrarnik.klaster$klaster[i]
