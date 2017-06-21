@@ -1,0 +1,5 @@
+"percipirani problemi"
+
+kratka.imena <- c("zrak","buka.promet","buka.kafic","smrad","kriminal","smece","guzva","zp.nedostatak","zp.neodrzavanje","jp.nepovezanost","jp.raspored","setnja","ulice.neodrzavanje","kom.infrastruktura")
+kratka.imena.2 <- c("Zrak","Buka.promet","Buka.kafić","Smrad","Kriminal","Smeće","Gužva","ZP.nedostatak","ZP.neodržavanje","JP.nepovezanost","JP.raspored","Šetnja","Ulice.neodržavanje","Kom.infrastruktura")
+duga.imena <- c("Zagađenost zraka", "Buka od prometa", "Buka od klubova ili kafića", "Loša kvaliteta zraka", "Kriminal, nasilje ili vandalizam", "Smeće ili otpaci na ulici", "Gužva u prometu", "Nedostatak zelenih površina ili parkova", "Loše održavanje zelenih površina ili parkova", "Slaba povezanost javnim prijevozom s ostalim dijelovima grada", "Loš raspored ili rijetki polasci javnog prijevoza", "Nedostatak prostora za šetnju", "Nedovoljno održavanje ulica i cesta", "Nedovršena komunalna infrastruktura")
