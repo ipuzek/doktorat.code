@@ -2,3 +2,5 @@
 .Rhistory
 .RData
 .Ruserdata
+OUT*
+REC_BIN*
