@@ -1,7 +1,7 @@
 
 # KOTAREVI ----------------------------------------------------------------
 
-sifrarnik <- readxl::read_xlsx("IvanP/!!!Doktorat/doktorat.code/data_pomocni/sifrarnik_kotarevi.xlsx") %>% 
+sifrarnik <- readxl::read_xlsx("IvanP/!!!Doktorat/doktorat.code/data_pomocni/sifrarnik__kotarevi.xlsx") %>% 
   select(ID, kotar.num)
 
 kotar.char <- c(
@@ -36,7 +36,7 @@ for (i in 1:22) {
   sveST$kotar[sveST$id %in% sifrarnik$ID[sifrarnik$kotar.num == i]] <- kotar.char[i]
 }
 
-# count(sveST, kotar) %>% View
+# count(sveST, kotar) # %>% View
 
 
 sveST$klaster <- "aaa"
@@ -47,9 +47,8 @@ for (i in 1:22) {
   sveST$klaster[sifrarnik.klaster$kotar[i] == sveST$kotar] <- sifrarnik.klaster$klaster[i]
 }
 
-count(sveST, klaster)
-
-xtabs(~ kotar + klaster, data = sveST)
+# count(sveST, klaster)
+# xtabs(~ kotar + klaster, data = sveST)
 
 # REDUCIRANI KOTAREVI -----------------------------------------------------
 
