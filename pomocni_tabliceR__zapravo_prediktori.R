@@ -5,11 +5,9 @@ library(knitr)
 library(forcats)
 library(questionr)
 
-# source("/home/ivan/IvanP/R/pocetni.R")
-# source("/home/ivan/IvanP/!!!Doktorat/doktorat.code/01_recode.R")
 
-source("/IvanP/R/pocetni.R")
-source("/IvanP/!!!Doktorat/doktorat.code/01_recode.R", encoding = "UTF-8")
+# source("IvanP/R/pocetni.R")
+# source("IvanP/!!!Doktorat/doktorat.code/01_recode.R", encoding = "UTF-8")
 
 sveST$svi <- as.factor("%")
 sveST$swi <- as.factor("Cijeli uzorak")
@@ -31,28 +29,7 @@ sveST$odgoj.diff <- NULL
 
 ###
 
-# klonirajmo varijable #
-
-# napiši funkciju koja primi dio data frejma i klonira ga sa sufiksom
-
-
-clone <- function(x.df, sufiks = "_R") {
-  
-  colnames(x.df) <- paste0(colnames(x.df), sufiks)
-  
-  x.df
-  
-}
-
-set_var_labs <- function (.data, ...) {
-  
-  if (is.list(...)) values <- unlist(list(...)) else values <- list(...)
-  
-  if (!all(names(values) %in% names(.data))) 
-    stop("some variables not found in .data")
-  for (v in names(values)) var_label(.data[[v]]) <- values[[v]]
-  .data
-}
+source("IvanP/!!!Doktorat/doktorat.code/FUNS/clone_R.R", encoding = "UTF-8")
 
 vrij3.lbz <- select(sveST, num_range("vrij3x", 1:11, width = 2)) %>% var_label()
 
@@ -68,7 +45,7 @@ select(sveST, num_range("vrij3x", 1:11, width = 2)) %>%
   
   set_var_labs(vrij3.lbz) %>% 
   
-  clone %>%
+  clone_R %>%
   
   cbind(sveST, .) -> sveST.2
   
@@ -482,9 +459,12 @@ sveST.8.5 <- cbind(sveST.8.4, poltZ)
 # }
 # sveST.8.5 %>% select(polt3_r:polt5_r) %>% sapply(class)
 
+
+
+
 # PIŠI FILE ---------------------------------------------------------------
 
-haven::write_sav(sveST.8.5, "/Dropbox/sveST_8_5.sav")
+# haven::write_sav(sveST.8.5, "/Dropbox/sveST_8_5.sav")
 
 
 

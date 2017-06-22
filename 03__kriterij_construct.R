@@ -1,16 +1,22 @@
 # skala
-# 
+#
 
 library(psych)
 
-nmz <- sveST.6 %>% select(vrij14x01:vrij14x10) %>% var_label() %>% unlist() %>% unname()
+source("IvanP/!!!Doktorat/doktorat.code/01_recode.R")
 
-sveST.6 %>%
+sveST.8 <- haven::read_sav(
+  "IvanP/!!!Doktorat/doktorat.code/data_pomocni/sveST_8_5.sav"
+  )
+
+nmz <- sveST.8 %>% select(vrij14x01:vrij14x10) %>% var_label() %>% unlist() %>% unname()
+
+sveST.8 %>%
   select(vrij14x01:vrij14x09) %>% 
   mutate_all(recode_98) %>% 
   cor(use = "pairwise.complete.obs")
 
-sveST.6 %>%
+sveST.8 %>%
   select(vrij14x01:vrij14x09) %>% 
   mutate_all(recode_98) %>%
   psych::alpha(keys = c("vrij14x01", "vrij14x05", "vrij14x07", "vrij14x08"))
