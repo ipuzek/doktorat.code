@@ -63,66 +63,33 @@ select(sveST, num_range("vrij3x", 1:11, width = 2)) %>%
 # sum(cor.1 - cor.2)
 
 
-labelled_to_sorted_factor <- function(x) to_factor(x) %>% fct_infreq()
+# geografske trajektorije imaju BUG -------------------------------------------------------------
+# i trenutno mi ne treba - zezat se s tim drugi put
 
-gt.lbz <- select(sveST, gt1 : gt2b) %>% var_label()
+# labelled_to_sorted_factor <- function(x) to_factor(x) %>% fct_infreq()
+# 
+# gt.lbz <- select(sveST, gt1 : gt2b) %>% var_label()
+# 
+# 
+# select(sveST, gt1 : gt2b) %>%
+#   mutate_all(labelled_to_sorted_factor) %>% 
+# 
+#   set_var_labs(gt.lbz) %>% clone %>% 
+#   
+#   cbind(sveST.2, .) -> sveST.3
 
+sveST.3 <- sveST.2
 
-select(sveST, gt1 : gt2b) %>%
-  mutate_all(labelled_to_sorted_factor) %>% 
-
-  set_var_labs(gt.lbz) %>% clone %>% 
-  
-  cbind(sveST.2, .) -> sveST.3
-
-
-# INGLEHART ---------------------------------------------------------------
-# inglehart recode bejzik
-
-recode_inglehart <- function(x) {
-  to_factor(x) %>%
-  fct_collapse(
-    mat = c(
-      "Održavanje reda u državi",
-      "Borba za radna mjesta",
-      "Visok stupanj ekonomskog rasta",
-      "Osiguranje obrane zemlje"
-    ),
-    postmat = c(
-      "Sudjelovanje ljudi u važnim vladinim odlukama",
-      "Zaštita slobode govora",
-      "Uljepšavanje gradova i sela"
-    ),
-    NZBO = c("Ne znam", "Bez odgovora")
-  )
-}
-
-select(sveST.3, vrij5a : vrij5b) %>% 
-  mutate_all(recode_inglehart) %>%
-  clone %>%
-  cbind(sveST.3, .) -> sveST.4
-
-
-# inglehart tipovi
-
-sveST.4$post.mat <- "mješoviti tip"
-sveST.4$post.mat[sveST.4$vrij5a_R == "mat" & sveST.4$vrij5b_R == "mat"] <- "materijalist"
-sveST.4$post.mat[sveST.4$vrij5a_R == "postmat" & sveST.4$vrij5b_R == "postmat"] <- "postmaterijalist"
-sveST.4$post.mat <- factor(sveST.4$post.mat, levels = c("materijalist", "mješoviti tip", "postmaterijalist"))
-var_label(sveST.4$post.mat) <- "Tip: mat-mješoviti-postmat"
-
-# table(sveST.4$post.mat)
+#  ------------------------------------------------------------------------
 
 fct_collapse_nzbo <- function (x) {
-  
+
   fct_collapse(x, NZBO = c("Ne zna", "Ne znam", "Bez odgovora"))
-  
+
 }
 
 sveST.4$vrij6_R <- sveST.4$vrij6 %>% to_factor %>% fct_collapse_nzbo
-         
-# ltabs(~ vrij6, sveST.4)
-# ffre(sveST.4$vrij6, levels = "prefixed")
+
 
 isnt_nan <- function(x) {!is.nan(x)}
 
@@ -223,54 +190,6 @@ sveST.6$vrij12_R <-
 class(sveST.6$vrij12_R) <- "labelled"
 
 
-# NEP skala recodes -------------------------------------------------------
-
-rec_okreni <- function(x.df) {
-  
-  x.df.recoded <- sjmisc::rec(x.df,
-              
-    recodes = " 1=5 [rec_uopće se ne slažem];
-                2=4 [rec_ne slažem se];
-                3=3 [niti se slažem niti se ne slažem];
-                4=2 [rec_slažem se];
-                5=1 [rec_u potpunosti se slažem];
-                98 = NA ",
-    
-    var.label = "OBRNUTE")
-  
-  return(x.df.recoded)
-
-  }
-  
-sveST.7 <- sveST.6 %>%
-  select(vrij14x01, vrij14x05, vrij14x07, vrij14x08) %>%
-  rec_okreni %>% 
-  cbind(sveST.6, .)
-
-var_label(sveST.7$vrij14x01_r) <- paste0("OBR_", var_label(sveST.7$vrij14x01))
-var_label(sveST.7$vrij14x05_r) <- paste0("OBR_", var_label(sveST.7$vrij14x05))
-var_label(sveST.7$vrij14x07_r) <- paste0("OBR_", var_label(sveST.7$vrij14x07))
-var_label(sveST.7$vrij14x08_r) <- paste0("OBR_", var_label(sveST.7$vrij14x08))
-#
-
-for (i in c("vrij14x01_r", "vrij14x05_r", "vrij14x07_r", "vrij14x08_r")) {
-  class(sveST.7[[i]]) <- "labelled"
-}
-
-NEP.cestice <- sveST.7 %>%
-  select(
-    vrij14x01_r,
-    vrij14x02,
-    vrij14x03,
-    vrij14x04,
-    vrij14x05_r,
-    vrij14x06,
-    vrij14x07_r,
-    vrij14x08_r,
-    vrij14x09)
-
-NEP.skala <- mutate_all(NEP.cestice, recode_98) %>% rowSums(na.rm = TRUE)
-var_label(NEP.skala) <- "NEP skala"
 
 miss_args <- function(x.df) {
   
