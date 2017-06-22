@@ -1,53 +1,115 @@
 # skala
 #
+source("IvanP/!!!Doktorat/doktorat.code/01_recode.R")
+source("IvanP/!!!Doktorat/doktorat.code/FUNS/clone_R.R")
+
+recode_98 <- function(x) {
+  x <- as.numeric(x)
+  recode(x,`98` = NA_real_)
+  }
 
 library(psych)
+library(questionr)
+library(tibble)
 
-source("IvanP/!!!Doktorat/doktorat.code/01_recode.R")
+nmz <- sveST %>% select(vrij14x01:vrij14x10) %>% var_label() %>% unlist() %>% unname()
 
-sveST.8 <- haven::read_sav(
-  "IvanP/!!!Doktorat/doktorat.code/data_pomocni/sveST_8_5.sav"
+# BASIC CHECKS
+# sveST %>%
+#   select(vrij14x01:vrij14x09) %>% 
+#   mutate_all(recode_98) %>%
+#   # lapply(table, useNA = "always")
+#   cor(use = "pairwise.complete.obs")
+
+# NEP skala recodes -------------------------------------------------------
+
+rec_okreni <- function(x) {
+  
+  x.recoded <- sjmisc::rec(x,
+                              
+                              rec = " 1=5 [rec_uopće se ne slažem];
+                              2=4 [rec_ne slažem se];
+                              3=3 [niti se slažem niti se ne slažem];
+                              4=2 [rec_slažem se];
+                              5=1 [rec_u potpunosti se slažem];
+                              98 = NA ",
+    
+    var.label = "OBRNUTE")
+  
+  return(x.recoded)
+
+  }
+  
+sveST %>%
+  select(vrij14x01 : vrij14x09) %>%
+  mutate_at(vars(vrij14x01, vrij14x05, vrij14x07, vrij14x08), rec_okreni) %>% 
+  rename(
+    vrij14x01_r = vrij14x01,
+    vrij14x05_r = vrij14x05,
+    vrij14x07_r = vrij14x07,
+    vrij14x08_r = vrij14x08)
+
+var_label(sveST.NEP$vrij14x01_r) <- paste0("OBR_", var_label(sveST.NEP$vrij14x01))
+var_label(sveST.NEP$vrij14x05_r) <- paste0("OBR_", var_label(sveST.NEP$vrij14x05))
+var_label(sveST.NEP$vrij14x07_r) <- paste0("OBR_", var_label(sveST.NEP$vrij14x07))
+var_label(sveST.NEP$vrij14x08_r) <- paste0("OBR_", var_label(sveST.NEP$vrij14x08))
+#
+
+for (i in c("vrij14x01_r", "vrij14x05_r", "vrij14x07_r", "vrij14x08_r")) {
+  class(sveST.NEP[[i]]) <- "labelled"
+}
+
+NEP.cestice <- sveST.NEP %>%
+  select(
+    vrij14x01_r,
+    vrij14x02,
+    vrij14x03,
+    vrij14x04,
+    vrij14x05_r,
+    vrij14x06,
+    vrij14x07_r,
+    vrij14x08_r,
+    vrij14x09)
+
+psych::alpha(NEP.cestice)
+
+
+
+
+NEP.skala <- mutate_all(NEP.cestice, recode_98) %>% rowSums(na.rm = TRUE)
+var_label(NEP.skala) <- "NEP skala"
+
+
+
+
+
+
+
+sveST.NEP.skala <- add_column(sveST.NEP, NEP.skala)
+rm(NEP.skala)
+
+parametri <- c(
+  min = mean(sveST.NEP.skala$NEP.skala),
+  esde = sd(sveST.NEP.skala$NEP.skala)
   )
 
-nmz <- sveST.8 %>% select(vrij14x01:vrij14x10) %>% var_label() %>% unlist() %>% unname()
 
-sveST.8 %>%
-  select(vrij14x01:vrij14x09) %>% 
-  mutate_all(recode_98) %>% 
-  cor(use = "pairwise.complete.obs")
+ggplot(sveST.NEP.skala, aes(x = NEP.skala)) +
+  geom_histogram(aes(y = ..density..), bins = 39, fill = "gray52") +
+  stat_function(fun = dnorm,
+                n = 700, args = list(mean = parametri["min"], sd = parametri["esde"]),
+                colour = "blue")
 
-sveST.8 %>%
-  select(vrij14x01:vrij14x09) %>% 
-  mutate_all(recode_98) %>%
-  psych::alpha(keys = c("vrij14x01", "vrij14x05", "vrij14x07", "vrij14x08"))
+NEP.cestice %>%
+  select(-vrij14x09) %>% 
+  cor(use = "pairwise.complete.obs") %>% 
+  pca(nfactors = 2, rotate = "oblimin") -> faktorica.oblimin
 
+faktorica.oblimin %>% str
 
+NEP.cestice %>% var_label()
 
-
-select(scopes.2015, starts_with("p37x"), -p37x2, -p37x7) %>% 
-  var_label()
-
-select(scopes.2015, starts_with("p37x"), -p37x2, -p37x7) %>% 
-  map(frre)
-
-skala <- scopes.2015 %>% 
-  select(starts_with("p37x"), -p37x2, -p37x7) %>%
-  mutate_all(as.numeric) %>% 
-  mutate_all(na_iff, y = 6)
-
-cor(skala, use = "pairwise.complete.obs")
-alpha(as.data.frame(skala), check.keys = TRUE)
-
-# očekivano, 4. čestica ne valja. izbacujem.
-skala.fin <- skala %>% select(-p37x4)
-
-# alpha = .71
-alpha(as.data.frame(skala.fin), check.keys = TRUE)
-
-# samo kompletni odgovori
-scopes.2015$scale.gend <- rowSums(skala.fin, na.rm = FALSE)
-
-
+  
 # shared histogram in ggplot ----------------------------------------------
 scopes.bg <- select(scopes.2015, - country)
 

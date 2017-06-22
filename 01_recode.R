@@ -1,4 +1,12 @@
 ### SVEsplit doktorat ###
+
+# CILJ: rekodiram i sređujem demografske varijable #
+# spol; dob.10, dob.5; obraz; zanimanje #
+# prihod (obični prihod kućanstva) #
+# prihod.cont (prihod - kontinuirani) # 
+# prihod.PC (prihod po članu kućanstva) #
+# imovina.kucanstva #
+
 library(stringr); library(magrittr)
 library(purrr); library(dplyr); library(tidyr); library(labelled)
 library(ggplot2)

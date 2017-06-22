@@ -1,3 +1,10 @@
+### SVEsplit doktorat ###
+
+# CILJ: prostorne jedinice #
+# kotar; klaster #
+# TODO: okrupniti kotareve #
+
+source("IvanP/!!!Doktorat/doktorat.code/01_recode.R")
 
 # KOTAREVI ----------------------------------------------------------------
 
