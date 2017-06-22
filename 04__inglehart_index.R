@@ -1,14 +1,19 @@
-# INGLEHART
-# s obzirom da je zeznutiji nego sam mislio
+### SVEsplit doktorat ###
 
-# 1. dio - materijalizam - postmaterijalizam
+# CILJ: mali DF s konačnim Inglehartovim indeksom # ingl.complete #
+# CILJ: i rekodiranim česticama koje ga čine #
+# INGLEHART je zeznutiji nego sam mislio
 
-# INGLEHART ---------------------------------------------------------------
+library(forcats)
+source("IvanP/!!!Doktorat/doktorat.code/03__kriterij_construct.R")
+
+
+# 1. dio - materijalizam - postmaterijalizam ------------------------------
 # inglehart recode bejzik
 
 recode_inglehart <- function(x) {
   to_factor(x) %>%
-    fct_collapse(
+    forcats::fct_collapse(
       mat = c(
         "Održavanje reda u državi",
         "Borba za radna mjesta",
@@ -24,10 +29,10 @@ recode_inglehart <- function(x) {
     )
 }
 
-select(sveST.3, vrij5a : vrij5b) %>% 
+select(sveST, vrij5a : vrij5b) %>% 
   mutate_all(recode_inglehart) %>%
   clone_R() %>%
-  cbind(sveST.3, .) -> sveST.4
+  cbind(sveST, .) -> sveST.4
 
 
 # inglehart tipovi - NE VALJA INSTRUMENt - ovo je pomoć za aditivni
@@ -52,14 +57,14 @@ sveST.4$post.mat.ingl.num <- recode(sveST.4$post.mat,
 sveST.4$gen.pov.ingl.num <- if_else(sveST.4$vrij6 == 1, true = 1, false = 0)
 
 # CHECKS
-# mean(sveST.4$gen.pov.num)
-# xtabs(~ vrij6 + gen.pov.num, sveST.4)
+# mean(sveST.4$gen.pov.ingl.num)
+# xtabs(~ vrij6 + gen.pov.ingl.num, sveST.4)
 # ffre(sveST.4$vrij6, levels = "prefixed")
 
 
 # homotolerancija za postmat ----------------------------------------------
 
-sveST.4$vrij7x03 %>% ffre()
+sveST.4$vrij7x03 %>%
   as.numeric %>%
   recode(`98` = NA_real_, `99` = NA_real_) %>% 
   table %>% cumsum()
@@ -68,7 +73,7 @@ sveST.4$homo.ingl.num <- if_else(sveST.4$vrij7x03 == 10, true = 2,
         false = if_else(sveST.4$vrij7x03 %in% c(7:9),
                         true = 1, false = 0)) # %>% table %>% prop.table()
   
-# xtabs(~ homo.num + vrij7x03, data = sveST.4)
+# xtabs(~ homo.ingl.num + vrij7x03, data = sveST.4)
 
 
 # susjedska tolernacija za postmat ----------------------------------------
@@ -114,16 +119,22 @@ sveST.5$indeks.tolerancije.ingl.num <-
                                     true = 1, false = 0)
           )
 
-# xtabs(~ indeks.tolerancije + indeks.tolerancije.num, sveST.5)
+# xtabs(~ indeks.tolerancije + indeks.tolerancije.ingl.num, sveST.5)
 
 # select(sveST.5, ends_with(".ingl.num")) %>%
 #   names
 #   # lapply(table)
 #   # cor(method = "kendall")
 
-sveST.6 <- select(sveST.5, ends_with(".ingl.num")) %>%
-  rowSums() %>%
-  add_column(.data = sveST.5, ingl.index.complete = .)
 
-# ggplot(sveST.6, aes(ingl.index.complete)) +
+
+# KONAČNA SKALA #
+df.ingl <- select(sveST.5, ends_with(".ingl.num"))
+ingl.skala <- rowSums(df.ingl)
+var_label(ingl.skala) <- "Inglehart skala"
+
+ingl.complete <- add_column(df.ingl, ingl.skala) %>% as_data_frame()
+rm(ingl.skala, df.ingl)
+
+# ggplot(ingl.complete, aes(ingl.skala)) +
 #   geom_bar()
