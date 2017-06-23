@@ -10,7 +10,7 @@
 
 
 
-sveST$okolis.rast <- 
+sveST$rast.okolis <- 
   sjmisc::rec(sveST$vrij10,
               
               rec = " 2=0 [Ekonomski rast i radna mjesta su važnija];
@@ -19,6 +19,6 @@ sveST$okolis.rast <-
               
               var.label = "Okoliš vs ekonomski rast")
 
-class(sveST$okolis.rast) <- "labelled"
-sveST$okolis.rast <- na_if(sveST$okolis.rast, 98)
+class(sveST$rast.okolis) <- "labelled"
+sveST$rast.okolis <- na_if(sveST$rast.okolis, 98)
 

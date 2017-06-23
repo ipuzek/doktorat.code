@@ -6,6 +6,7 @@
 # dobar dio cilja je vidjeti koliko varijance objašnjava inglehart kad se kontrolira prihod
 # prihod imam samo kućanstva, ali OK, koristi po glavi
 
+# rm(list = ls())
 source("IvanP/!!!Doktorat/doktorat.code/01__recode.R")
 source("IvanP/!!!Doktorat/doktorat.code/02__kotar_klaster.R")
 source("IvanP/!!!Doktorat/doktorat.code/03__kriterij_construct.R")
@@ -53,12 +54,26 @@ ggplot(sveST.6, aes(x = prihod.PC, y = NEP.skala)) +
   geom_point() + geom_smooth() +
   xlim(c(100, 10000))
 
-# pokušaj logartimitranja
+# pokušaj logaritmiranja
 ggplot(sveST.6, aes(x = log(prihod.PC), y = NEP.skala)) +
          geom_point() + geom_smooth() +
   xlim(c(6,10))
 
 
-# zamijenimo NEP oprekom "okoliš-rast" ------------------------------------
+# NEP i opreka "okoliš-rast" ------------------------------------
 
-sveST$okolis.rast %>% table
+# NEP vs okoliš-rast
+select(sveST.6, rast.okolis, NEP.skala) %>% cor(use = "pairwise.complete.obs")
+
+glm(rast.okolis ~ NEP.skala, family = binomial(link = "logit"), data = sveST.6) %>% 
+  arm::display()
+
+select(sveST.6, rast.okolis, ingl.skala) %>% cor(use = "pairwise.complete.obs")
+
+# ista korelacija, ali s obzirom da je varijabla binarna, efektivno je veća!
+
+ltabs(~rast.okolis, sveST.6,
+      addNA = TRUE, drop.unused.levels = TRUE)
+
+
+
