@@ -6,12 +6,16 @@
 # prihod.cont (prihod - kontinuirani) # 
 # prihod.PC (prihod po članu kućanstva) #
 # imovina.kucanstva #
+# DODATNI: rast i okoliš #
 
-library(stringr); library(magrittr)
-library(purrr); library(dplyr); library(tidyr); library(labelled)
+library(stringr)
+library(purrr)
+library(labelled)
 library(ggplot2)
 
 library(broom); library(intubate)
+
+library(tidyr); library(tibble); library(dplyr)
 
 source("IvanP/R/pocetni.R")
 source("IvanP/!!!Doktorat/doktorat.code/FUNS/transf_cont.R")
@@ -162,3 +166,8 @@ sveST <- sveST %>%
   select(-dmg14_1_v, -dmg14_2_v, -dmg14_3_v, -dmg14_4_v, -dmg14_5_v)
 
 var_label(sveST$imovina.kucanstva) <- "Imovina - indeks"
+
+
+# DODATNI PREDIKTORI ----------------------------------------------------------
+
+source("IvanP/!!!Doktorat/doktorat.code/01_1__dodatni_prediktori.R")

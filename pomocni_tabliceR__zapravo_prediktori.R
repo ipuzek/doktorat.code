@@ -12,7 +12,7 @@ library(questionr)
 sveST$svi <- as.factor("%")
 sveST$swi <- as.factor("Cijeli uzorak")
 
-### razlika u najvažnijoj karakteristici odgoja izmežu mužke i ženske djece.
+### razlika u najvažnijoj karakteristici odgoja izmežu muške i ženske djece.
 
 sveST$odgoj.diff <-  sveST$vrij4abx1 - sveST$vrij4abx2
 # table(sveST$odgoj.diff, useNA = "always")
@@ -165,16 +165,7 @@ sveST.6 <- sveST.5 %>%
 
 #
 
-sveST.6$vrij10_R <- 
-  sjmisc::rec(sveST.6$vrij10,
-              
-    recodes = " 2=0 [Ekonomski rast i radna mjesta su važnija];
-                1=1 [Zaštita okoliša je važnija];
-                3=98 [NZBO] ",
-    
-    var.label = "Okoliš vs ekonomski rast")
 
-class(sveST.6$vrij10_R) <- "labelled"
 
 #
 

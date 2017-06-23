@@ -11,9 +11,7 @@ source("IvanP/!!!Doktorat/doktorat.code/FUNS/clone_R.R")
 #   recode(x,`98` = NA_real_)
 #   }
 
-library(psych)
 library(questionr)
-library(tibble)
 
 nmz <- sveST %>% select(vrij14x01:vrij14x09) %>% var_label() %>% 
   unlist() %>% unname()
@@ -84,7 +82,7 @@ library(GPArotation)
 NEP.2 %>%
   # select(-) %>% 
   cor(use = "pairwise.complete.obs") %>% 
-  pca(nfactors = 2, rotate = "varimax")
+  psych::pca(nfactors = 2, rotate = "varimax")
 
 
 # KONAČNA SKALA #

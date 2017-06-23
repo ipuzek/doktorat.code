@@ -45,7 +45,7 @@ library(GPArotation)
 qual.2 %>%
   # select(-) %>% 
   cor(use = "pairwise.complete.obs") %>% 
-  pca(nfactors = 2, rotate = "varimax")
+  psych::pca(nfactors = 2, rotate = "varimax")
 
 # FAKTORICA # split by klaster
 faktorica.po.klasterima <-
@@ -54,7 +54,7 @@ faktorica.po.klasterima <-
   split(.$klaster) %>%
   lapply(select, -klaster) %>%
   lapply(cor, y = NULL, use = "complete.obs") %>%
-  lapply(pca, nfactors = 2, rotate = "varimax")
+  lapply(psych::pca, nfactors = 2, rotate = "varimax")
 
 map(faktorica.po.klasterima, "loadings") %>%
   map(round, 2) %>% 
