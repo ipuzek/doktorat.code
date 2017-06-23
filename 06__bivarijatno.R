@@ -6,6 +6,9 @@
 # dobar dio cilja je vidjeti koliko varijance objašnjava inglehart kad se kontrolira prihod
 # prihod imam samo kućanstva, ali OK, koristi po glavi
 
+source("IvanP/!!!Doktorat/doktorat.code/01__recode.R")
+source("IvanP/!!!Doktorat/doktorat.code/02__kotar_klaster.R")
+source("IvanP/!!!Doktorat/doktorat.code/03__kriterij_construct.R")
 source("IvanP/!!!Doktorat/doktorat.code/04__inglehart_index.R")
 source("IvanP/!!!Doktorat/doktorat.code/05__quality_index.R")
 
@@ -58,4 +61,4 @@ ggplot(sveST.6, aes(x = log(prihod.PC), y = NEP.skala)) +
 
 # zamijenimo NEP oprekom "okoliš-rast" ------------------------------------
 
-
+sveST$okolis.rast %>% table
