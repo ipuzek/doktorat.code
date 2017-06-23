@@ -1,9 +1,9 @@
 ### SVEsplit doktorat ###
 
 # CILJ: prostorne jedinice #
-# kotar; klaster #
-# TODO: okrupniti kotareve #
+# kotar; klaster; zone #
 
+library(forcats)
 source("IvanP/!!!Doktorat/doktorat.code/01_recode.R")
 
 # KOTAREVI ----------------------------------------------------------------
@@ -62,4 +62,26 @@ for (i in 1:22) {
 
 # REDUCIRANI KOTAREVI -----------------------------------------------------
 
+count(sveST, kotar) %>% as.data.frame()
+  # openxlsx::write.xlsx("kotar.xlsx")
 
+xtabs(~ kotar + klaster, sveST)
+  # openxlsx::write.xlsx("kotar_klaster.xlsx")
+
+sveST$zone <- fct_collapse(
+  
+  sveST$kotar,
+  
+  SpinutVarošMeje = c("Spinut", "Varoš", "Meje"),
+  Lučac.ManušGripe = c("Lučac-Manuš", "Gripe"),
+  Bačvice.TrstenikMertojak = c("Bačvice-Trstenik", "Mertojak"),
+  Ravne_njiveBrda.Neslanovac = c("Ravne njive", "Brda-Neslanovac"),
+  KmanKocunarPujanke = c("Kman", "Kocunar", "Pujanke"),
+  LokveBlatine.ŠkrapeSplit_3 = c("Lokve", "Blatine-Škrape", "Split 3"),
+  MejašiSirobujaŽnjanVisoka = c("Mejaši", "Sirobuja", "Žnjan", "Visoka")
+  
+  )
+
+# xtabs(~ kotar + zone, sveST) %>% openxlsx::write.xlsx("kotar_zone.xlsx")
+# 
+# fct_count(sveST$zone)
