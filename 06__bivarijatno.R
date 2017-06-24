@@ -60,6 +60,7 @@ ggplot(sveST.6, aes(x = log(prihod.PC), y = NEP.skala)) +
   xlim(c(6,10))
 
 
+
 # NEP i opreka "okoliš-rast" ------------------------------------
 
 # NEP vs okoliš-rast
@@ -70,7 +71,8 @@ glm(rast.okolis ~ NEP.skala, family = binomial(link = "logit"), data = sveST.6) 
 
 select(sveST.6, rast.okolis, ingl.skala) %>% cor(use = "pairwise.complete.obs")
 
-# ista korelacija, ali s obzirom da je varijabla binarna, efektivno je veća!
+
+### ista korelacija, ali s obzirom da je varijabla binarna, efektivno je veća!
 
 ltabs(~rast.okolis, sveST.6,
       addNA = TRUE, drop.unused.levels = TRUE)
