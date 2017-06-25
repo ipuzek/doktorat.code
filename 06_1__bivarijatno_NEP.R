@@ -156,17 +156,18 @@ group_by(sveST.6, zone) %>%
   arrange(qual.prosjek)
 
 ### korelacije po zonama
-select(sveST.6, qual.skala, NEP.skala, zone) %>% 
+dplyr::select(sveST.6, qual.skala, NEP.skala, zone) %>% 
   split(.$zone) %>%
-  map(select, -zone) %>% 
+  map(dplyr::select, -zone) %>% 
   map_df(cor, use = "pairwise.complete.obs") %>% 
   t %>% as.data.frame.matrix() %>% 
   rownames_to_column("zone") %>% 
-  select(zone, V2) %>% 
-  arrange(V2)
+  dplyr::select(zone, V2) %>% 
+  arrange(abs(V2)) # absolute je nice touch
 
 
 ### ovo sve služi samo za dobit statističku značajnost korelacija
+### treba to linearnom regresijom
 
 corrs <- select(sveST.6, qual.skala, NEP.skala, zone) %>% 
   split(.$zone) %>%
@@ -180,10 +181,42 @@ to.extract <- names(un.corrs)[str_detect(names(un.corrs), "p.value")]
 un.corrs[to.extract] %>% as.numeric()
 
 
-### glorious plot!
+### glorious plot - NEP vs qual.skala
 
 filter(sveST.6, NEP.skala > 10) %>% # izbacit outliera
   ggplot(aes(x = qual.skala, y = NEP.skala)) +
+  geom_jitter(alpha = .8, stroke = 0.2) + 
+  # geom_smooth(method = "lm",
+  #             formula = y ~ splines::bs(x, degree = 2), se = FALSE) +
+  geom_smooth(method = "lm", se = TRUE, colour = "red") +
+  facet_wrap(~ zone, nrow = 1)
+
+# NALAZ (svih nalaza): u slučaju slabe kvalitete okoliša (), postoji pozitivna
+ # korelacija i visok stupanj "utjecaja" procijenjen B regresijskim koeficijentom
+ # između percipiranih ekoloških problema i NEP skale. Drugim riječima,
+ # postojanje objektivnih problema i njihova percepcija se izravno vežu na rezultate
+ # NEP skale, koja primarno mjeri zabrinutost za okoliš.
+ # KLJUČNO je pri tome da rezultati NEP skale istovremeno NISU visoki u prosjeku
+  # u odnosu na druge dijelove grada [ne radi se dakle o jednostavnom odnosu
+  # - visoki problemi - visok NEP, nego baš o mehanizmu formiranja stava posredovanom
+  # percepcijom problema ]
+
+ # gradska zona čiji stanovnici okoliš ocjenjuju najbolje, ujedno je i zona gdje je
+ # ova korelacija negativna.
+
+ # DAKLE.
+ # Ako je okoliš u relativno lošem stanju, porastom percpecije problema rast će i
+ # proekološki stavovi.
+ # Ako je okoliš u relativno dobrom stanju, porast percepcije problema neće imati
+ # značajan učinak na ekološke stavove, ili će ta veza biti i negativna:
+  # tendencija da lošija procjena okoliša rezultira nižom razinom proekoloških stavova,
+  # što znači da se determinante odnosa kriju drugdje (kultura!)
+
+### glorious plot - NEP vs ingl.skala
+# NALAZ: ne funckionira toliko dobro
+
+filter(sveST.6, NEP.skala > 10) %>% # izbacit outliera
+  ggplot(aes(x = ingl.skala, y = NEP.skala)) +
   geom_jitter(alpha = .8, stroke = 0.2) + 
   # geom_smooth(method = "lm",
   #             formula = y ~ splines::bs(x, degree = 2), se = FALSE) +
