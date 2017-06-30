@@ -138,3 +138,19 @@ rm(ingl.skala, df.ingl)
 
 # ggplot(ingl.complete, aes(ingl.skala)) +
 #   geom_bar()
+
+
+# samo za rezultate -------------------------------------------------------
+
+# ingl.tablica <- rbind(
+#   ingl.complete$post.mat.ingl.num %>% table %>% prop.table(),
+#   ingl.complete$gen.pov.ingl.num %>% table %>% prop.table(),
+#   ingl.complete$homo.ingl.num %>% table %>% prop.table(),
+#   ingl.complete$indeks.tolerancije.ingl.num %>% table %>% prop.table()
+# )
+# 
+# ingl.tablica[2,3] <- NA
+# 
+# as.data.frame.matrix(ingl.tablica) %>% 
+#   round(2) %>% 
+#   write.csv2("jij.csv")
