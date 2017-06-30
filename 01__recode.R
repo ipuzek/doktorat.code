@@ -10,7 +10,7 @@
 
 library(stringr)
 library(purrr)
-library(labelled)
+library(labelled); library(forcats)
 library(ggplot2)
 
 library(broom); library(intubate)
