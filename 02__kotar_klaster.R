@@ -72,16 +72,36 @@ sveST$zone <- fct_collapse(
   
   sveST$kotar,
   
-  SpinutVarošMeje = c("Spinut", "Varoš", "Meje"),
-  Lučac.ManušGripe = c("Lučac-Manuš", "Gripe"),
-  Bačvice.TrstenikMertojak = c("Bačvice-Trstenik", "Mertojak"),
-  Ravne_njiveBrda.Neslanovac = c("Ravne njive", "Brda-Neslanovac"),
-  KmanKocunarPujanke = c("Kman", "Kocunar", "Pujanke"),
-  LokveBlatine.ŠkrapeSplit_3 = c("Lokve", "Blatine-Škrape", "Split 3"),
-  MejašiSirobujaŽnjanVisoka = c("Mejaši", "Sirobuja", "Žnjan", "Visoka")
+  `Spinut-Varoš-Meje` = c("Spinut", "Varoš", "Meje"),
+  `Lovret-Grad` = "Lovret-Grad",
+  `Bačvice-Trstenik-Mertojak` = c("Bačvice-Trstenik", "Mertojak"),
+  `Bol` = "Bol",
+  `Lučac-Manuš-Gripe` = c("Lučac-Manuš", "Gripe"),
+  `Lokve-Blatine-Škrape-Split_3` = c("Lokve", "Blatine-Škrape", "Split 3"),
+  `Plokite-Sućidar` = "Plokite-Sućidar",
+  `Ravne_njive-Brda-Neslanovac` = c("Ravne njive", "Brda-Neslanovac"),
+  `Kman-Kocunar-Pujanke` = c("Kman", "Kocunar", "Pujanke"),
+  `Mejaši-Sirobuja-Žnjan-Visoka` = c("Mejaši", "Sirobuja", "Žnjan", "Visoka")
   
-  )
+  ) %>% 
+  
+  factor(levels = c("Spinut-Varoš-Meje",
+                    "Lovret-Grad",
+                    "Bačvice-Trstenik-Mertojak",
+                    "Bol",
+                    "Lučac-Manuš-Gripe",
+                    "Lokve-Blatine-Škrape-Split_3",
+                    "Plokite-Sućidar",
+                    "Ravne_njive-Brda-Neslanovac",
+                    "Kman-Kocunar-Pujanke",
+                    "Mejaši-Sirobuja-Žnjan-Visoka"))
+
 
 # xtabs(~ kotar + zone, sveST) %>% openxlsx::write.xlsx("kotar_zone.xlsx")
 # 
 # fct_count(sveST$zone)
+# levels(sveST$zone)
+
+# just CHECK
+# šine <- c("0049301", "0113034", "0148652", "0113069")
+# as.character(sveST$sk) %in% šine %>% sum
