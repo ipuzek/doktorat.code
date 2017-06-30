@@ -3,6 +3,8 @@
 # CILJ: mali DF s indeksom kvalitete # qual.complete #
 # CILJ: i rekodiranim česticama koje ga čine #
 
+source("IvanP/!!!Doktorat/doktorat.code/01__recode.R")
+source("IvanP/!!!Doktorat/doktorat.code/02__kotar_klaster.R")
 source("IvanP/!!!Doktorat/doktorat.code/03__kriterij_construct.R")
 
 qual <- sveST %>% 
@@ -32,9 +34,7 @@ qual.2 <- select(qual, -qol1x03, -qol1x10, -qol1x11)
 
 kratka.imena <- c("zrak","buka.promet","smrad","kriminal","smece","guzva","zp.nedostatak","zp.neodrzavanje","setnja","ulice.neodrzavanje","kom.infrastruktura")
 # identical(length(names(qual.2)), length(kratka.imena))
-
-cor(qual.2, use = "complete.obs") %>% 
-  corrplot::corrplot()
+# names(qual.2) <- kratka.imena
 
 # ALPHA #
 psych::alpha(qual.2)
