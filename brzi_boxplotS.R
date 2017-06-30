@@ -9,8 +9,8 @@ source("IvanP/R/xx__ggsejv.R")
 
 # 1. izaberi dataset: NEP.complete // qual.complete
 
-nmz <- NEP.complete %>% select(-ends_with(".skala")) %>% var_label() %>% unlist() %>% unname()
-jea <- NEP.complete %>% 
+nmz <- qual.complete %>% select(-ends_with(".skala")) %>% var_label() %>% unlist() %>% unname()
+jea <- qual.complete %>% 
   select(-ends_with(".skala")) %>% 
   mutate_all(na_if, 98) %>% 
   gather(kljuc, velju, everything())
@@ -28,7 +28,7 @@ jea.minz <- jea %>%
 
 ggplot(jea, aes(x = velju, y = kljuc)) +
   geom_boxploth() +
-  geom_point(data = jea.minz, aes(x = minz), colour = "blue", size = 2) +
+  geom_point(data = jea.minz, aes(x = minz), shape = 0) +
   scale_y_discrete(label = str_wrap(nmz, 50)) +
   labs(x = NULL, y = NULL)
 
@@ -39,7 +39,7 @@ ggplot(jea, aes(x = velju, y = kljuc)) +
 
 # library(svglite)
 
-ggsejv("IvanP/!!!Doktorat/doktorat.tekst/OUT/NEP_box.svg",
+ggsejv("IvanP/!!!Doktorat/doktorat.tekst/OUT/qual_box.svg",
        plot = last_plot(), device = grDevices::svg,   # bolji za export u ODT
        AA = "A6.l")
 
