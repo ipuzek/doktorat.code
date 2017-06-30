@@ -6,15 +6,16 @@
 # 1. osnovni model će bit stavovi vs inglehart...prihod...kontrolna demografija
 # prihod imam samo kućanstva, ali OK, koristi po glavi ### imam i društveni status
 
-library(intubate)
-library(broom)
-library(lme4)
 # rm(list = ls())
 source("IvanP/!!!Doktorat/doktorat.code/01__recode.R")
 source("IvanP/!!!Doktorat/doktorat.code/02__kotar_klaster.R")
 source("IvanP/!!!Doktorat/doktorat.code/03__kriterij_construct.R")
 source("IvanP/!!!Doktorat/doktorat.code/04__inglehart_index.R")
 source("IvanP/!!!Doktorat/doktorat.code/05__quality_index.R")
+
+library(intubate)
+library(broom)
+library(lme4)
 
 sveST.6 <- sveST.5 %>%
   add_column(
@@ -30,10 +31,12 @@ sveST.6 <- sveST.5 %>%
  # istovremeno bitno smanjuje kfc. povezanosti ingl.indeksa i NEP-a.
  # prihod ne utječe ni na što, uključit ću ga ponovno tek na kontekstualnoj razini
 
-sveST.6 %>% 
+sveST.6 %>%
   ntbt_lm(NEP.skala ~ ingl.skala) %>% 
-  tidy() %>% 
-  select(term, estimate, std.error) # %>% display()
+  tidy() %>% filter(p.value < .01)
+
+  arm::display()
+  # HH::lmplot()
 
 sveST.6 %>%
   # filter(NEP.skala > 8) %>% ## influential observation prema q-q plotu
@@ -41,9 +44,9 @@ sveST.6 %>%
          obraz.rel__ = fct_relevel(obraz, "SŠ_4god")) %>% 
   ntbt_lm(NEP.skala ~ ingl.skala + spol + dob.sd + obraz.rel__) %>%
   # ntbt_lm(NEP.skala ~ ingl.skala + spol + obraz) %>%
-  # tidy %>% select(term, estimate, std.error) %>% 
-  arm::display()
-  # plot()
+  tidy %>% filter(p.value < .05)
+  # arm::display()
+  HH::lmplot()
 
 
 
@@ -61,18 +64,27 @@ sveST.6 %>%
 # M1 - alt - logistička: rast.okolis ~ inglehart + socdem, sve individualno ----
 
 sveST.6 %>%
+ ntbt_glm(
+    rast.okolis ~ ingl.skala,
+    family = binomial(link = logit), na.action = "na.exclude") %>%
+  # arm::display() %>% 
+  tidy() %>%filter(p.value < .01)
+
+sveST.6 %>%
   # filter(NEP.skala > 8) %>% ## influential observation prema q-q plotu
   mutate(dob.sd = dmg2/(2*sd(dmg2)),
          obraz.rel__ = fct_relevel(obraz, "SŠ_4god")) %>% 
   ntbt_glm(
     rast.okolis ~ ingl.skala + spol + dob.sd + obraz.rel__ ,
-    family = binomial(link = logit), na.action = "na.exclude" %>%
+    family = binomial(link = logit), na.action = "na.exclude") %>%
   # ntbt_lm(NEP.skala ~ ingl.skala + spol + obraz) %>%
-  # tidy %>% select(term, estimate, std.error) %>% 
+  tidy %>%filter(p.value < .01)
   # binomTools::Rsq()
   # glance()
-  arm::display()
+  # arm::display()
 # plot()
+sveST.6$rast.okolis
+
 
 # NALAZ: 
 # KOMENTAR: prihod ima vrlo nisku korelaciju sa zavisnim varijablama od interesa

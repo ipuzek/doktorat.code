@@ -14,6 +14,12 @@ source("IvanP/!!!Doktorat/doktorat.code/03__kriterij_construct.R")
 source("IvanP/!!!Doktorat/doktorat.code/04__inglehart_index.R")
 source("IvanP/!!!Doktorat/doktorat.code/05__quality_index.R")
 
+sveST.6 <- sveST.5 %>%
+  add_column(
+    NEP.skala = NEP.complete$NEP.skala,
+    ingl.skala = ingl.complete$ingl.skala,
+    qual.skala = qual.complete$qual.skala
+  )
 
 # NEP vs inglehart --------------------------------------------------------
 
@@ -29,23 +35,43 @@ sveST.6 <- sveST.5 %>%
 
 select(sveST.6, NEP.skala, ingl.skala) %>% cor
   # lapply(table, useNA = "always")
+cor.test(~ NEP.skala + ingl.skala, data = sveST.6)
 
 ggplot(sveST.6, aes(x = ingl.skala, y = NEP.skala)) +
-  geom_jitter() + geom_smooth()
+  geom_jitter() + geom_smooth(method = "lm") +
+  labs(x = "Skala proširenog postmaterijalizma",
+       y = "NEP-skala") +
+  theme_minimal()
 
 group_by(sveST.6, ingl.skala) %>% 
   summarise(NEP.prosjek = mean(NEP.skala))
 
 
 # shared histogram in ggplot KILLAH!
-prd <- group_by(sveST.6, ingl.skala) %>% summarise(NEP.prosjek = mean(NEP.skala))
 
-ggplot(sveST.6, aes(x = NEP.skala)) +            # u ovom datasetu su obje varijable
-  geom_bar(data = NEP.complete, fill = "grey") + # u ovom je samo zavisna
-  geom_bar(aes(fill = ingl.skala)) +             # nezavisna
-  geom_vline(data = prd, aes(xintercept = NEP.prosjek)) + # i prosjeci naravno (3. dataset, HA!)
-  facet_wrap(~ ingl.skala, ncol = 1) +           # nezavisna
-  guides(fill = FALSE)                           # remove the legend
+ingl.plot <- sveST.6 %>% select(NEP.skala, ingl.skala) %>% 
+  mutate(ingl.skala.fac = recode_factor(ingl.skala,
+                                        `0` = "0 - Najniži (prošireni) postmaterijalizam",
+                                        `1` = "1", `2` = "2", `3` = "3", `4` = "4", `5` = "5",
+                                        `6` = "6 - Najviši (prošireni) postmaterijalizam"
+  )
+  )
+
+prd <- group_by(ingl.plot, ingl.skala.fac) %>% summarise(NEP.prosjek = mean(NEP.skala))
+
+ingl.plot %>% 
+  ggplot(aes(x = NEP.skala)) +                        # u ovom datasetu su obje varijable
+  geom_bar(data = NEP.complete, fill = "grey") +      # u ovom je samo zavisna
+  geom_bar(aes(fill = ingl.skala.fac)) +              # nezavisna
+  geom_vline(data = prd, aes(xintercept = NEP.prosjek),
+             size = 1.3, alpha = .5) +                # i prosjeci naravno (3. dataset, HA!)
+  facet_wrap(~ ingl.skala.fac, ncol = 1) +            # nezavisna
+  guides(fill = FALSE) +                              # remove the legend
+  labs(x = "Skala nove ekološke paradigme",
+       y = "Broj ispitanika") +
+  scale_y_continuous(sec.axis = sec_axis(~ . / 700, name = "Udio ispitanika")) +
+  theme_minimal()
+  
 
 
 # NEP vs prihod.PC --------------------------------------------------------
@@ -56,6 +82,7 @@ ggplot(sveST.6, aes(x = NEP.skala)) +            # u ovom datasetu su obje varij
 
 select(sveST.6, NEP.skala, prihod.PC) %>% cor(use = "pairwise.complete.obs")
  # lapply(table, useNA = "always")
+cor.test(~ NEP.skala + prihod.PC, data = sveST.6)
 
 ggplot(sveST.6, aes(x = prihod.PC, y = NEP.skala)) +
   geom_point() + geom_smooth() +
@@ -96,6 +123,27 @@ rm(m1, mm1)
 t.test(NEP.skala ~ rast.okolis, data = sveST.6)
 effsize::cohen.d(NEP.skala ~ rast.okolis, data = sveST.6)
 
+# shared histogram in ggplot KILLAH!
+
+rast.okolis.plot <- sveST.6 %>% select(NEP.skala, rast.okolis) %>% 
+  mutate(rast.okolis.fac = to_fac_drop(rast.okolis))
+
+prdd <- group_by(rast.okolis.plot, rast.okolis.fac) %>% summarise(NEP.prosjek = mean(NEP.skala))
+
+rast.okolis.plot %>% na.omit %>% 
+  ggplot(aes(x = NEP.skala)) +                        # u ovom datasetu su obje varijable
+  geom_bar(data = na.omit(NEP.complete), fill = "grey") +      # u ovom je samo zavisna
+  geom_bar(aes(fill = rast.okolis.fac)) +              # nezavisna
+  geom_vline(data = na.omit(prdd), aes(xintercept = NEP.prosjek),
+             size = 1.3, alpha = .5) +                # i prosjeci naravno (3. dataset, HA!)
+  facet_wrap(~ rast.okolis.fac, ncol = 1) +            # nezavisna
+  guides(fill = FALSE) +                              # remove the legend
+  labs(x = "Skala nove ekološke paradigme",
+       y = "Broj ispitanika") +
+  scale_y_continuous(sec.axis = sec_axis(~ . / 700, name = "Udio ispitanika")) +
+  theme_minimal()
+
+
 # NEP i obrazovanje -------------------------------------------------------
 # NALAZ: najveća korelacija dosad (.14), jipi!
  # oblik povezanosti - opet lagani obrnuti U, ali pad je tek na Mag+
@@ -106,9 +154,15 @@ ltabs(~ obraz, sveST.6,
 
 sveST.6$obraz.num <- as.numeric(sveST.6$obraz)
 
-filter(sveST.6, NEP.skala > 10) %>% # izbacit outliera
-  select(obraz.num, NEP.skala) %>%
-  cor(method = "spearman", use = "pairwise.complete.obs")
+# filter(sveST.6, NEP.skala > 10) %>% # izbacit outliera
+sveST.6 %>% 
+  select(qual.skala, dmg2) %>%
+  cor(method = "pearson", use = "pairwise.complete.obs")
+
+# filter(sveST.6, NEP.skala > 10) %>% # izbacit outliera
+sveST.6 %>% 
+  cor.test(~ ingl.skala + dmg2, data = .,
+           method = "pearson", use = "pairwise.complete.obs")
 
 filter(sveST.6, NEP.skala > 10) %>% # izbacit outliera
   ggplot(aes(x = obraz, y = NEP.skala)) +
@@ -142,13 +196,14 @@ select(sveST.6, spol.num, NEP.skala) %>% cor(use = "pairwise.complete.obs")
 # mm1$R2mod; sqrt(mm1$R2mod)
 # rm(m1, mm1)
 
-t.test(NEP.skala ~ spol, data = sveST.6)
-effsize::cohen.d(NEP.skala ~ spol, data = sveST.6)
+t.test(ingl.skala ~ spol, data = sveST.6)
+effsize::cohen.d(ingl.skala ~ spol, data = sveST.6)
 
 # NEP i kvaliteta okoliša ---------------------------------------------------------------
 # NALAZ: nikakva korelacija
 
 select(sveST.6, qual.skala, NEP.skala) %>% cor(use = "pairwise.complete.obs")
+cor.test(~ qual.skala + NEP.skala, data = sveST.6)
 
 ### problemi po zonama
 group_by(sveST.6, zone) %>%
@@ -222,3 +277,25 @@ filter(sveST.6, NEP.skala > 10) %>% # izbacit outliera
   #             formula = y ~ splines::bs(x, degree = 2), se = FALSE) +
   geom_smooth(method = "lm", se = TRUE, colour = "red") +
   facet_wrap(~ zone, nrow = 1)
+
+
+# SEJV --------------------------------------------------------------------
+
+source("IvanP/R/xx__ggsejv.R")
+
+# ggsejv("IvanP/!!!Doktorat/doktorat.tekst/OUT/nep_by_inglehart.svg",
+#        # plot = nep,
+#        device = grDevices::svg,   # bolji za export u ODT
+#        AA = "A5.p")
+
+#  A5  # width = 148, height = 210, units = "mm")
+
+ggsave("IvanP/!!!Doktorat/doktorat.tekst/OUT/nep_by_inglehart.svg",
+       # plot = nep,
+       device = grDevices::svg,   # bolji za export u ODT
+       width = 180, height = 210, units = "mm")
+
+ggsave("IvanP/!!!Doktorat/doktorat.tekst/OUT/nep_by_rast.okolis.svg",
+       # plot = nep,
+       device = grDevices::svg,   # bolji za export u ODT
+       width = 170, height = 180/2, units = "mm")
