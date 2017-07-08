@@ -131,7 +131,22 @@ ggplot(data = sveST.6) +
 
 
 
-# M1 - 4. korak: NEP ~ inglehart + socdem | (prihod | dio Splita) ----
+# M1 - 4. korak: DESKRIPTIVNI model - sve individualno ----
+
+sveST.6 %>%
+  filter(NEP.skala > 8) %>% ## influential observation prema q-q plotu
+  
+  mutate(dob.sd = dmg2/(2*sd(dmg2)),
+         obraz.rel__ = fct_relevel(obraz, "SŠ_4god")) %>% 
+  
+  ntbt_lm(NEP.skala ~ ingl.skala + spol + dob.sd + obraz.rel__ + rel2_r + sockap.veza + nef.politika + imovina.kucanstva) %>%
+  # ntbt_lm(NEP.skala ~ ingl.skala + spol + obraz) %>%
+  tidy %>% filter(p.value < .01)
+  # arm::display()
+HH::lmplot()
+
+
+
 # NALAZ: 
 # KOMENTAR:
 
@@ -149,12 +164,62 @@ MX.multi <- coef(MX)$zone %>%
   rename(intercept = `(Intercept)`) %>% 
   as_tibble()
 
-
-sveST.6 %>% 
+filter(sveST.6, NEP.skala > 15) %>% 
   ggplot(aes(x = qual.skala, y = NEP.skala)) +
   geom_jitter(alpha = .8, stroke = 0.2) + 
-  geom_smooth(method = "lm", se = TRUE, colour = "red") +
+  geom_smooth(method = "lm", se = FALSE) +
   geom_abline(data = MX.multi, aes(slope = qual.skala, intercept = intercept)) +
-  facet_wrap(~ zone, nrow = 1)
-
+  facet_wrap(~ zone, nrow = 1, strip.position = "left") +
+  labs(x = "Percepcija problema urbanog okoliša",
+       y = "NEP skala")
+sveST.6$zone
+ggsave("plot_to_rule_them_all.png",
+       width = 30, height = 21, units = "cm", dpi = 600)
+ggsejv()
 # YEEEEEEEEEEEEEEEEESSSSSSSSSSSSSSSSSSSSSSSS #
+
+
+# M2 - 1. korak NEP ~ percepcija + zona
+
+
+
+sveST.6 %>%
+  ntbt_lm(NEP.skala ~ qual.skala + zone) %>% 
+  arm::display()
+  # tidy() %>% filter(p.value < .01)
+  HH::lmplot()
+
+sveST.6 %>%
+  ntbt_lmer(NEP.skala ~ qual.skala + (1 | zone)) %>% 
+  # coef()
+  # fixef()
+  # ranef()
+  arm::se.ranef()
+  # arm::display()
+  # tidy()
+
+multi.prvi <- sveST.6 %>% 
+  ntbt_lmer(NEP.skala ~ (qual.skala | zone))
+
+multi.prvi %>% 
+  # coef()
+  # fixef()
+  # ranef()  #  -> multi.prvi.ranefs
+  # arm::se.ranef()  #  -> multi.prvi.se.ranefs
+  arm::se.fixef()
+  # arm::display()
+  # tidy()
+  
+multi.final <- sveST.6 %>%
+  ntbt_lmer(NEP.skala ~ (qual.skala + spol + dmg2) | zone)
+
+multi.final %>% 
+  # coef()
+  # fixef()
+  # ranef()  #  -> multi.final.ranefs
+  # arm::se.ranef() ->  #  multi.final.se.ranefs
+  arm::se.fixef()
+  # arm::display()
+  # tidy()
+
+# HH::lmplot()

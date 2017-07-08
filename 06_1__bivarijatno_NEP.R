@@ -72,6 +72,9 @@ ingl.plot %>%
   scale_y_continuous(sec.axis = sec_axis(~ . / 700, name = "Udio ispitanika")) +
   theme_minimal()
   
+# ggsave("IvanP/!!!Doktorat/doktorat.tekst/OUT/shared_hist__inglehart.png",
+#        width = 5*2.2, height = 8*2, units = "cm",
+#        dpi = 300)
 
 
 # NEP vs prihod.PC --------------------------------------------------------
@@ -143,6 +146,9 @@ rast.okolis.plot %>% na.omit %>%
   scale_y_continuous(sec.axis = sec_axis(~ . / 700, name = "Udio ispitanika")) +
   theme_minimal()
 
+ggsave("IvanP/!!!Doktorat/doktorat.tekst/OUT/shared_hist__rast.okolis.png",
+       width = 8.3*2, height = 5*2, units = "cm",
+       dpi = 300)
 
 # NEP i obrazovanje -------------------------------------------------------
 # NALAZ: najveća korelacija dosad (.14), jipi!
