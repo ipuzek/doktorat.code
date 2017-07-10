@@ -78,11 +78,11 @@ sveST.4$homo.ingl.num <- if_else(sveST.4$vrij7x03 == 10, true = 2,
 
 # susjedska tolernacija za postmat ----------------------------------------
 
-isnt_nan <- function(x) {!is.nan(x)}
+isnt_na <- function(x) {!is.na(x)}
 
 sveST.5 <- sveST.4 %>%
   
-  mutate_at(vars(starts_with("vrij8_"), -vrij8_8, -vrij8_9), funs(vVRIJ8 = isnt_nan)) %>%
+  mutate_at(vars(starts_with("vrij8_"), -vrij8_8, -vrij8_9), funs(vVRIJ8 = isnt_na)) %>%
   
   mutate(indeks.tolerancije = 
            vrij8_1_vVRIJ8 + 
